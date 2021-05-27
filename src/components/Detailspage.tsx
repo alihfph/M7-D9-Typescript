@@ -1,69 +1,58 @@
-import { Component } from 'react';
-import { Container, Col, Row } from "react-bootstrap";
-import { match } from "react-router-dom";
-import {Iresult} from  "./type"
-import {IData} from  "./type"
+import { Container, Col, Row, Image } from "react-bootstrap";
+import { useState, useEffect } from "react";
+import { withRouter } from "react-router";
+import { useParams } from "react-router";
+import { IData } from "./type";
 
-type MyProps = {
-  // using `interface` is also ok
-  result: Iresult[];
+type MusicParams = {
+  id: string;
 };
-interface myState {
-  data: IData[]
-}
+// interface myState {
+//   data: IData[];
+// }
 
-class Detailspage extends Component<MyProps, myState> { 
-  constructor(props:MyProps) {
-    super(props);
-    console.log(this.props.match.params.id)
-     this.state={
-       data:[]
-     }}
-  
-    componentDidMount() {
-      this.getJobDetails();
-      
-    }
-    getJobDetails = async () => {
-      const response = await fetch(
-        `https://striveschool-api.herokuapp.com/api/deezer/track/${this.props.match.params.id}`
-      );
-      const data = await response.json();
-      console.log(data);
-  
-      this.setState({ data });
-    };
+const Detailspage = () => {
+  const { id } = useParams<MusicParams>();
+  const [track, setTrack] = useState<IData>();
 
-  render() {
-    return (
-        <Container>
-        <Row>
-          {data && (
-            <>
-              <Col xs={12} className="d-flex align-items-center my-4">
-                {/* <Image
+  useEffect(() => {
+    (async () => {
+      try {
+        const response = await fetch(
+          `https://striveschool-api.herokuapp.com/api/deezer/track/${id}`
+        );
+        const data = await response.json();
+        console.log(data);
+
+        setTrack(data);
+      } catch (error) {
+        console.log(error);
+      }
+    })();
+  }, [id]);
+
+  return (
+    <Container>
+      <Row>
+        <>
+          <Col xs={12} className="d-flex align-items-center my-4">
+            {/* <Image
                   fluid
                   className="header-img me-3"
                   src={data.company_logo}
                 /> */}
-                 
-                
-              </Col>
-              <Col xs={12} className=" ">
-              <h1>{data.title_short}</h1>
-                <h1>{data.title }</h1>
+          </Col>
+          <Col xs={12} className=" ">
+            {/* <h1>{track?.album.title_short}</h1> */}
+            <h1>{track?.album.title}</h1>
+            <Image rounded alt="albumCover" src={track?.album.cover_xl} />
+            <h5>How to apply:</h5>
+            {/* <h2>{track?.album.isrc}</h2> */}
+          </Col>
+        </>
+      </Row>
+    </Container>
+  );
+};
 
-                <h5>How to apply:</h5>
-                <h2>{data.isrc}</h2>
-                
-              </Col>
-            </>
-          )}
-        </Row>
-      </Container>
-    );
-  }
-}
-
-export default Detailspage;
-
+export default withRouter(Detailspage);
