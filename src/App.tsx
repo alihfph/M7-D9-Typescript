@@ -1,13 +1,17 @@
-import React from 'react';
+import "./index.css";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { BrowserRouter, Route } from "react-router-dom";
+import Detailspage from "./components/Detailspage";
+import Searchpage from "./components/Searchpage";
+import "./App.css";
 
-import './App.css';
 
 function App() {
   return (
-    <div className="App">
-     <h1> Yes its working</h1>
-      
-    </div>
+    <BrowserRouter>
+    <Route exact path="/" component={Searchpage} />
+    <Route  path="/:id" component={Detailspage} />
+  </BrowserRouter>
   );
 }
 
